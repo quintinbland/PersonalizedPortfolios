@@ -12,18 +12,23 @@ The PersonalizedPortfolios chatbot leverages AWS servless services to provide a 
 * CUI used is Amazon Lex
 
 #### Utterances 
-Place image here
+![utterances](https://user-images.githubusercontent.com/97932685/178031142-24da0af5-73b2-443e-9688-8babb86b169a.png)
+
 
 #### Slots
-Place image here
+![slots](https://user-images.githubusercontent.com/97932685/178031172-f5618fda-be95-4366-b735-b6547ab4994b.png)
+
 
 #### Confirmation
-Place image here
+![confirmation](https://user-images.githubusercontent.com/97932685/178031215-a0edd4ae-a9e7-42f7-bf78-f6460e6ba771.png)
+
 
 ### Chatbot Demo
 Demonstration of how to use the chat bot. 
 
-Place video here. 
+https://user-images.githubusercontent.com/97932685/178031245-6654ac5c-60d6-42fd-b476-f683cb5318a2.mov
+
+
 
 
 ## Contributors
