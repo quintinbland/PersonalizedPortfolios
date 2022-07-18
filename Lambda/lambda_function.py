@@ -94,6 +94,7 @@ In this section, you will create an Amazon Lambda function that will validate th
     * The `age` should be greater than zero and less than 65.
     * The `investment_amount` should be equal to or greater than 5000.
 
+
 4. Once the intent is fulfilled, the bot should respond with an investment recommendation based on the selected risk level as follows:
 
     * **none:** "100% bonds (AGG), 0% equities (SPY)"
@@ -111,7 +112,6 @@ In this section, you will create an Amazon Lambda function that will validate th
 
 """
 
-
 ### Intents Handlers ###
 def recommend_portfolio(intent_request):
     """
@@ -123,8 +123,39 @@ def recommend_portfolio(intent_request):
     investment_amount = get_slots(intent_request)["investmentAmount"]
     risk_level = get_slots(intent_request)["riskLevel"]
     source = intent_request["invocationSource"]
+    if source == 'DialogCodeHook':
+        slots = get_slots(intent_request)
+        validation = validate_data(age, investment_amount)
+        if not validation['isValid']:
+            slots[validation['violatedSlot']] = None
+            return elicit_slot(intent_request['sessionAttributes'], intent_request['currentIntent']['name'], slots, validation['violatedSlot'], validation['message'])
+        session_attributes = intent_request['sessionAttributes']
+        return delegate(session_attributes, get_slots(intent_request))
+    recommendation = get_recommendation(risk_level)
+    return close(intent_request['sessionAttributes'], 'Fulfilled',{'contentType':'PlainText', 'content': f'Based on the risk level you chose, the recommended portfolio is {recommendation}'})
+    
+def get_recommendation(risk_level):
+    portfolio_recommendation = {
+        'none': '100% bonds (AGG), 0% equities (SPY)',
+        'low':  '60% bonds (AGG), 40% equities (SPY)',
+        'medium': '40% bonds (AGG), 60% equities (SPY)',
+        'high': '20% bonds (AGG), 80% equities (SPY)'
+        }
+    return portfolio_recommendation[risk_level.lower()]
 
-    # YOUR CODE GOES HERE!
+def validate_data(age, investment_amount):
+    if age is not None:
+        age = parse_int(age)
+        if age < 0:
+            return build_validation_result(False, 'age', 'Age can not be negative')
+        elif age > 65:
+            return build_validation_result(False, 'age', 'Age must be less than 65')
+    if investment_amount is not None:
+        investment_amount = parse_int(investment_amount)
+        if investment_amount < 5000:
+            return build_validation_result(False, 'investmentAmount', 'Investment amount must be at least $5000.')
+    return build_validation_result(True, None, None)
+    
 
 
 ### Intents Dispatcher ###
